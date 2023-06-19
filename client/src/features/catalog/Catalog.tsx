@@ -1,26 +1,18 @@
-import {
-  Avatar,
-  List,
-  ListItem,
-  ListItemAvatar,
-  ListItemText,
-} from "@mui/material";
 import { Product } from "../../app/models/product";
 import ProductList from "./ProductList";
+import { useState, useEffect } from "react";
 
-export default function Catalog(props: any) {
+export default function Catalog() {
+  const [products, setProducts] = useState<Product[]>([]);
+
+  useEffect(() => {
+    fetch("https://localhost:7036/api/Products")
+      .then((response) => response.json())
+      .then((data) => setProducts(data));
+  }, []);
   return (
     <>
-      <ProductList products={props.products} />
-      {/* <ul>
-        {props.products.map((product: any) => (
-          <li key={product.id}>
-            {product.name}-{product.price}
-          </li>
-        ))}
-      </ul> */}
-
-      {/* <button onClick={addProducts}>AddProduct</button> */}
+      <ProductList products={products} />
     </>
   );
 }
