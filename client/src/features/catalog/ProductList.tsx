@@ -1,5 +1,6 @@
 import {
   Avatar,
+  Grid,
   List,
   ListItem,
   ListItemAvatar,
@@ -13,10 +14,12 @@ interface Props {
 }
 export default function ProductList({ products }: Props) {
   return (
-    <List>
+    <Grid container spacing={4}>
       {products.map((product: any) => (
-        <ProductCard key={product.id} product={product} />
+        <Grid item xs={4} key={product.id}>
+          <ProductCard product={product} />
+        </Grid>
       ))}
-    </List>
+    </Grid>
   );
 }
