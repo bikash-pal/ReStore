@@ -3,7 +3,8 @@ import logo from "./logo.svg";
 import "./App.css";
 import { Product } from "../models/product";
 import Catalog from "../../features/catalog/Catalog";
-import { Typography } from "@mui/material";
+import { Container, CssBaseline, Typography } from "@mui/material";
+import Header from "./Header";
 
 function App() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -25,8 +26,11 @@ function App() {
   }, []);
   return (
     <>
-      <Typography variant="h1">ReStore</Typography>
-      <Catalog products={products} />
+      <CssBaseline />
+      <Header />
+      <Container>
+        <Catalog products={products} />
+      </Container>
 
       {/* 
       <ul>
