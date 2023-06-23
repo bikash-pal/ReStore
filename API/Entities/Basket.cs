@@ -22,11 +22,15 @@
 
         public void RemoveItem(int productId,int quantity) {
             var item = Items.FirstOrDefault(item => item.ProductId == productId);
-            if (item != null)
+            if (item == null)
             {
+                return;
+            }
+            else if (item != null)
+            { 
                 item.Quantity -= quantity;
             }
-            if (item.Quantity == 0)
+            if (item.Quantity <= 0)
             {
                 Items.Remove(item);
             }
