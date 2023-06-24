@@ -10,11 +10,24 @@ import {
 } from "@mui/material";
 import { Product } from "../../app/models/product";
 import { Link } from "react-router-dom";
+import { useState } from "react";
+import LoadingComponent from "../../app/layout/LoadingComponent";
+import agent from "../../app/api/agent";
+import { LoadingButton } from "@mui/lab";
 
 interface Props {
   product: Product;
 }
 export default function ProductCard({ product }: Props) {
+  const [loading, setLoading] = useState(false);
+
+  function handleAddItems(productId: Number) {
+    setLoading(true);
+    agent.Basket.addItems(productId)
+      .catch((error) => console.log(error))
+      .finally(() => setLoading(false));
+  }
+
   return (
     <Card>
       <CardHeader
@@ -46,7 +59,13 @@ export default function ProductCard({ product }: Props) {
         </Typography>
       </CardContent>
       <CardActions>
-        <Button size="small">Add to cart</Button>
+        <LoadingButton
+          loading={loading}
+          onClick={() => handleAddItems(product.id)}
+          size="small"
+        >
+          Add to cart
+        </LoadingButton>
         <Button component={Link} to={`/catalog/${product.id}`} size="small">
           View
         </Button>
