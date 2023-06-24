@@ -80,7 +80,11 @@ namespace API.Controllers
         private Basket CreateBasket()
         {
             var buyerId = Guid.NewGuid().ToString();
-            var cookieOption = new CookieOptions { IsEssential = true, Expires = DateTime.Now.AddDays(30) };
+            var cookieOption = new CookieOptions { IsEssential = true, 
+                                                    Expires = DateTime.Now.AddDays(30), 
+                                                    SameSite = SameSiteMode.None,
+                                                    Secure = true,
+                                                };
             Response.Cookies.Append("buyerId", buyerId, cookieOption);
             var basket = new Basket { BuyingId = buyerId };
             _context.Baskets.Add(basket);
