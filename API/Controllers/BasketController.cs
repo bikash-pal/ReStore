@@ -104,7 +104,7 @@ namespace API.Controllers
                     PictureUrl = item.Product.PictureUrl,
                     Type = item.Product.Type,
                     Brand = item.Product.Brand,
-                    Quantity = item.Quantity.ToString()
+                    Quantity = item.Quantity
                 }).ToList(),
             };
         }
