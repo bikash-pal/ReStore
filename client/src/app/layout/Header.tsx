@@ -10,7 +10,7 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
-import { NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 
 const midLinks = [
   { titile: "catalog", path: "/catalog" },
@@ -60,7 +60,12 @@ export default function Header({ darkMode, handleTheamChange }: Props) {
         </List>
 
         <Box display="flex" alignItems="center">
-          <IconButton size="large" sx={{ color: "inherit" }}>
+          <IconButton
+            component={Link}
+            to="basket"
+            size="large"
+            sx={{ color: "inherit" }}
+          >
             <Badge badgeContent={3} color="secondary">
               <ShoppingCart />
             </Badge>
