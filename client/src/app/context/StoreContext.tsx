@@ -11,6 +11,7 @@ export const StoreContext = createContext<StoreContextValue | undefined>(
   undefined
 );
 
+//useStoreContext is a custom react hook which used UseCotext hook to access StoreContext
 export function useStoreContext() {
   const context = useContext(StoreContext);
   if (context === undefined) {
@@ -25,11 +26,13 @@ export function StoreProvider({ children }: PropsWithChildren<any>) {
   function removeItem(productId: number, quantity: number) {
     if (!basket) return;
     const items = [...basket.items];
-    const itemIndex = items.findIndex((i) => i.productId === productId);
-    if (itemIndex > 0) {
+    const itemIndex = items.findIndex((item) => item.productId === productId);
+    if (itemIndex > -1) {
+      // Modified condition to include index 0
       items[itemIndex].quantity -= quantity;
+      if (items[itemIndex].quantity <= 0) items.splice(itemIndex, 1);
       setBasket((prevState) => {
-        return { ...prevState!, items };
+        return { ...prevState!, items: [...items] }; // Create a new array reference
       });
     }
   }
