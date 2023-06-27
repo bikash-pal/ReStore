@@ -1,12 +1,7 @@
-// import { useEffect, useState } from "react";
-// import { Basket } from "../../app/models/basket";
-// import agent from "../../app/api/agent";
-// import LoadingComponent from "../../app/layout/LoadingComponent";
 import {
   Box,
   Button,
   Grid,
-  IconButton,
   Paper,
   Table,
   TableBody,
@@ -17,34 +12,23 @@ import {
   Typography,
 } from "@mui/material";
 import { Add, Delete, Remove } from "@mui/icons-material";
-import { useStoreContext } from "../../app/context/StoreContext";
 import { useState } from "react";
 import agent from "../../app/api/agent";
 import { LoadingButton } from "@mui/lab";
 import BasketSummary from "./BasketSummary";
 import { Link } from "react-router-dom";
+import { useAppDispatch, useAppSelector } from "../../app/store/configureStore";
+import { removeItem, setBasket } from "./basketSlice";
 
 export default function BasketPage() {
-  // const [loading, setLoading] = useState(true);
-  // const [basket, setBasket] = useState<Basket | null>(null);
-
-  // useEffect(() => {
-  //   agent.Basket.get()
-  //     .then((basket) => setBasket(basket))
-  //     .catch((error) => console.log(error))
-  //     .finally(() => {
-  //       setLoading(false);
-  //     });
-  // }, []);
-  // if (loading) <LoadingComponent message="Loading Basket.." />;
-
-  const { basket, setBasket, removeItem } = useStoreContext();
+  const { basket } = useAppSelector((state) => state.basket);
+  const dispatch = useAppDispatch();
   const [loading, setLoading] = useState(false);
 
   function handleAddItems(productId: number) {
     setLoading(true);
     agent.Basket.addItems(productId)
-      .then((basket) => setBasket(basket))
+      .then((basket) => dispatch(setBasket(basket)))
       .catch((error) => console.log(error))
       .finally(() => setLoading(false));
   }
@@ -52,7 +36,7 @@ export default function BasketPage() {
   function handleRemoveItems(productId: number, quantity: number = 1) {
     setLoading(true);
     agent.Basket.removeItem(productId, quantity)
-      .then(() => removeItem(productId, quantity))
+      .then(() => dispatch(removeItem({ productId, quantity })))
       .catch((error) => console.log(error))
       .finally(() => setLoading(false));
   }
