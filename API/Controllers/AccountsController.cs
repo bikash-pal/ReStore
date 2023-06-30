@@ -1,28 +1,36 @@
 ﻿using API.DTOs;
 using API.Entities;
+using API.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
-    public class AccountsController:BaseApiController
+    public class AccountsController : BaseApiController
     {
         private readonly UserManager<User> _userManager;
+        private readonly TokenService _tokenService;
 
-        public AccountsController(UserManager<User> userManager)
+        public AccountsController(UserManager<User> userManager, TokenService tokenService)
         {
             _userManager = userManager;
+            _tokenService = tokenService;
         }
 
         [HttpPost]
-        public async Task<ActionResult<User>> Login(LoginDto loginDto)
+        public async Task<ActionResult<UserDto>> Login(LoginDto loginDto)
         {
             var user = await _userManager.FindByNameAsync(loginDto.UserName);
-            if (user == null || ! await _userManager.CheckPasswordAsync(user,loginDto.Password))
+            if (user == null || !await _userManager.CheckPasswordAsync(user, loginDto.Password))
             {
                 return Unauthorized();
             }
-            return user;
+            return new UserDto
+            {
+                Email = user.Email,
+                Token = await _tokenService.GenerateToken(user)
+            };
 
         }
 
@@ -30,11 +38,11 @@ namespace API.Controllers
         public async Task<ActionResult> Register(RegisterDto registerDto)
         {
             var user = new User { UserName = registerDto.UserName, Email = registerDto.Email };
-            var result =await _userManager.CreateAsync(user,registerDto.Password);
+            var result = await _userManager.CreateAsync(user, registerDto.Password);
 
-            if(!result.Succeeded)
+            if (!result.Succeeded)
             {
-                foreach(var error in result.Errors)
+                foreach (var error in result.Errors)
                 {
                     ModelState.AddModelError(error.Code, error.Description);
 
@@ -43,7 +51,17 @@ namespace API.Controllers
 
             }
             await _userManager.AddToRoleAsync(user, "Member");
-            return StatusCode(201); 
+            return StatusCode(201);
+
+        }
+
+        [Authorize]
+        [HttpGet("currentUser")]
+        public async Task<ActionResult<UserDto>> GetCurrentUser()
+        {
+            var user=await _userManager.FindByNameAsync(User.Identity.Name);
+
+            return  new UserDto { Email = user.Email,Token=await _tokenService.GenerateToken(user) };
 
         }
     }
