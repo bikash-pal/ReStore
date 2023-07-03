@@ -9,7 +9,7 @@ import { RootState } from "../../app/store/configureStore";
 
 const productsAdaptar = createEntityAdapter<Product>();
 
-export const fetchProductAsync = createAsyncThunk<Product[]>(
+export const fetchProductsAsync = createAsyncThunk<Product[]>(
   "catalog/fetchProductsAsync",
   async () => {
     try {
@@ -20,6 +20,19 @@ export const fetchProductAsync = createAsyncThunk<Product[]>(
   }
 );
 
+//97 not working
+
+// export const fetchProductAsync = createAsyncThunk<Product, number>(
+//   "catalog/fetchProductAsync",
+//   async (productId) => {
+//     try {
+//       return await agent.Catalog.details(productId);
+//     } catch (error) {
+//       console.log(error);
+//     }
+//   }
+// );
+
 export const catalogSlice = createSlice({
   name: "catalog",
   initialState: productsAdaptar.getInitialState({
@@ -28,17 +41,26 @@ export const catalogSlice = createSlice({
   }),
   reducers: {},
   extraReducers: (builder) => {
-    builder.addCase(fetchProductAsync.pending, (state) => {
+    builder.addCase(fetchProductsAsync.pending, (state) => {
       state.status = "pendingFetchProducts";
     });
-    builder.addCase(fetchProductAsync.fulfilled, (state, action) => {
+    builder.addCase(fetchProductsAsync.fulfilled, (state, action) => {
       productsAdaptar.setAll(state, action.payload);
       state.status = "idle";
       state.productLoaded = true;
     });
-    builder.addCase(fetchProductAsync.rejected, (state) => {
+
+    builder.addCase(fetchProductsAsync.rejected, (state) => {
       state.status = "idle";
     });
+    //97 not working
+    // builder.addCase(fetchProductAsync.pending, (state) => {
+    //   state.status = "pendingFetchProduct";
+    // });
+    // builder.addCase(fetchProductAsync.fulfilled, (state, action) => {
+    //   productsAdaptar.updateOne(state, action.payload);
+    //   state.status = "idle";
+    // });
   },
 });
 

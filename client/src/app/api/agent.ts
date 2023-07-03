@@ -28,6 +28,7 @@ axios.interceptors.response.use(
         toast.error(data.title);
         break;
       case 401:
+        console.log("inside 401");
         toast.error(data.title);
         break;
       case 404:
@@ -45,8 +46,8 @@ axios.interceptors.response.use(
 
 const requests = {
   get: (url: string) => axios.get(url).then(responseBody),
-  post: (url: string, body: {}) => axios.post(url).then(responseBody),
-  put: (url: string, body: {}) => axios.put(url).then(responseBody),
+  post: (url: string, body: {}) => axios.post(url, body).then(responseBody),
+  put: (url: string, body: {}) => axios.put(url, body).then(responseBody),
   delete: (url: string) => axios.delete(url).then(responseBody),
 };
 
@@ -71,6 +72,12 @@ const Basket = {
     requests.delete(`basket?productId=${productId}&quantity=${quantity}`),
 };
 
-const agent = { Catalog, TestError, Basket };
+const Account = {
+  login: (values: any) => requests.post("accounts/login", values),
+  register: (values: any) => requests.post("accounts/register", values),
+  currentUser: () => requests.get("accounts/currentUser"),
+};
+
+const agent = { Catalog, TestError, Basket, Account };
 
 export default agent;
